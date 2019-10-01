@@ -2,6 +2,7 @@ package com.devtides.countriesapp.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.devtides.countriesapp.di.DaggerApiComponent
 import com.devtides.countriesapp.model.CountriesService
 import com.devtides.countriesapp.model.Country
 import io.reactivex.Scheduler
@@ -10,13 +11,19 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
 
 class ListViewModel : ViewModel() {
 
-    private val countriesService = CountriesService()
-    private val disposable = CompositeDisposable()
+    @Inject
+    lateinit var countriesService:CountriesService
 
+    init {
+        DaggerApiComponent.create().inject(this)
+    }
+
+    private val disposable = CompositeDisposable()
     val countries = MutableLiveData<List<Country>>()
     val countryLoadError = MutableLiveData<Boolean>()
     val loading = MutableLiveData<Boolean>()
