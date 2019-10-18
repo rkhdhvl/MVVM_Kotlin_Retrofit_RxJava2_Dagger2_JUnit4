@@ -8,6 +8,7 @@ import javax.inject.Inject
 
 class CountriesService {
 
+    // Injecting an instance of CountriesApi into the CountriesService class
     @Inject
     lateinit var api:CountriesApi
 
