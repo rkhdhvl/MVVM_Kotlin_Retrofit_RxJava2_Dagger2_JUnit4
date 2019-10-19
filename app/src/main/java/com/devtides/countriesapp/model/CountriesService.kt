@@ -3,6 +3,8 @@ import com.devtides.countriesapp.di.DaggerApiComponent
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Single
+import kotlinx.coroutines.Deferred
+import retrofit2.Response
 import javax.inject.Inject
 
 
@@ -16,7 +18,12 @@ class CountriesService {
       DaggerApiComponent.create().inject(this)
     }
 
-    fun getCountries():Single<List<Country>>
+    /*fun getCountries():Single<List<Country>>
+    {
+        return api.getCountries()
+    }*/
+
+    suspend fun getCountries():Response<List<Country>>
     {
         return api.getCountries()
     }
