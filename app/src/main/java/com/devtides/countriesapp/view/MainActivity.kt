@@ -9,18 +9,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.devtides.countriesapp.R
 import com.devtides.countriesapp.viewmodel.ListViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     // lateinit indicates that the property will be initialzed at a later point
     lateinit var viewModel: ListViewModel
     private val countryListAdapter = CountryListAdapter(arrayListOf())
+    private var myJob:Job? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         // instantiating the viewModel
         viewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
-        viewModel.refresh()
+        executeCoroutineToFecthData()
+        //viewModel.refresh()
 
         countriesList.apply {
             layoutManager = LinearLayoutManager(context)
@@ -29,10 +36,18 @@ class MainActivity : AppCompatActivity() {
 
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing=false
-            viewModel.refresh()
+            executeCoroutineToFecthData()
+          //  viewModel.refresh()
         }
 
         observeViewModel()
+    }
+
+    private fun executeCoroutineToFecthData()
+    {
+        myJob = CoroutineScope(Dispatchers.IO).launch {
+            viewModel.refresh()
+        }
     }
 
     fun observeViewModel() {
@@ -58,4 +73,8 @@ class MainActivity : AppCompatActivity() {
          })
     }
 
+    override fun onDestroy() {
+        myJob?.cancel()
+        super.onDestroy()
+    }
 }
